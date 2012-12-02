@@ -4,6 +4,7 @@ package com.iteracja.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class QueryResult {
 
@@ -102,6 +103,19 @@ public class QueryResult {
 			return Long.parseLong(records.get(cursor)[index].toString());
 		else 
 			return null;
+	}
+
+	/**
+	 * @author Michał Tomczak
+	 * @return
+	 */
+	public HashMap<String, Object> toHashMap() {
+		HashMap<String, Object> result=new HashMap<String, Object>();
+		Object[] row=records.get(cursor);
+		for(int i=0; i <row.length; i++){
+			result.put(columns[i], row[i]);
+		}
+		return result;
 	}
 
 
