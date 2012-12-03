@@ -323,31 +323,18 @@ public class Postgresql implements DatabaseConnector {
 						}
 
 						Statement statement = connect.createStatement();
+						qr.setStatement(statement);
+
 						if (qd.isRecords()) {
 
 							ResultSet res = statement.executeQuery(qd.getSql());
-							ResultSetMetaData columns = res.getMetaData();
-							String columnsData[] = new String[columns.getColumnCount()];
-							for (int i = 1; i <= columns.getColumnCount(); i++) {
-								columnsData[i - 1] = columns.getColumnName(i);
-							}
-
-							qr.setColumns(columnsData);
-
-							while (res.next()) {
-								qr.newRecord();
-								Object values[] = new Object[columns.getColumnCount()];
-								for (int i = 1; i <= columns.getColumnCount(); i++) {
-									values[i - 1] = res.getString(i);
-								}
-								qr.addRecord(values);
-							}
-
-							qr.resetCursor();
-						} else
+							qr.setResult(res);
+						} else{
 							statement.execute(qd.getSql());
-
-						statement.close();
+							statement.close();
+							
+						}
+						
 					} catch (SQLException e) {
 
 						qr.setErrorMessage(e.getMessage());

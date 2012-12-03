@@ -2,7 +2,9 @@ package com.iteracja.database;
 
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -12,8 +14,7 @@ public class QueryResult {
 	private String errorMessage;
 	private ResultSet result;
 	private int cursor=-1;
-	private String[] columns;
-	private ArrayList<Object[]> records=new ArrayList<Object[]>();
+	private Statement statement;
 
 	public boolean isSuccess() {
 		return success;
@@ -28,8 +29,7 @@ public class QueryResult {
 	 * @param result obiekt z danymi
 	 */
 	public void setResult(ResultSet result) {
-		this.result=result;
-		
+		this.result=result;		
 	}
 
 	
@@ -47,75 +47,45 @@ public class QueryResult {
 		
 	}
 
-	public void addRecord(Object[] value) {
-		
-		records.add(value);
-	
-	}
-
-	public void setColumns(String[] columnsData) {
-		columns=columnsData;
-	}
-
-	public boolean next() {
-		cursor++;
-		if(records.size()>cursor)
-			return true;
-		else
-			return false;
+	public boolean next() throws SQLException {
+		return result.next();
 	}
 
 	public String getString(String column) throws SQLException {
-		int index=getColumnIndex(column);
-		return String.valueOf(records.get(cursor)[index]);
-	}
-
-	private int getColumnIndex(String column) throws SQLException{
-		
-		for(int i=0; i < columns.length; i++){
-			if(columns[i].equals(column))
-				return i;
-		}
-		
-		throw new SQLException("Column not found");
-	}
-
-	public void resetCursor() {
-		cursor=-1;
+		return result.getString(column);
 	}
 
 	public Boolean getBoolean(String column) throws SQLException {
-		int index=getColumnIndex(column);
-		if(records.get(cursor)[index]!=null)
-			return Boolean.parseBoolean(records.get(cursor)[index].toString());
-		else
-			return null;
+		return result.getBoolean(column);
 	}
 
 	public int getInt(String column) throws SQLException {
-		int index=getColumnIndex(column);
-		return Integer.parseInt(records.get(cursor)[index].toString());
+		return result.getInt(column);
 	}
 
 	public Long getLong(String column) throws SQLException {
-		int index=getColumnIndex(column);
-		if(records.get(cursor)[index]!=null)
-			return Long.parseLong(records.get(cursor)[index].toString());
-		else 
-			return null;
+		return result.getLong(column);
 	}
 
 	/**
 	 * @author Michał Tomczak
 	 * @return
+	 * @throws SQLException 
 	 */
-	public HashMap<String, String> toHashMap() {
-		HashMap<String, String> result=new HashMap<String, String>();
-		Object[] row=records.get(cursor);
-		for(int i=0; i <row.length; i++){
-			result.put(columns[i], (String)row[i]);
+	public HashMap<String, String> toHashMap() throws SQLException {
+
+		HashMap<String, String> resultHashMap=new HashMap<String, String>();
+
+		ResultSetMetaData columns = result.getMetaData();
+		for (int i = 1; i <= columns.getColumnCount(); i++) {
+			resultHashMap.put(columns.getColumnName(i), result.getString(i));
 		}
-		return result;
+
+		return resultHashMap;
+	}
+
+	void setStatement(Statement statement) {
+		this.statement=statement;
 	}
 
 
