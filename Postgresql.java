@@ -338,7 +338,7 @@ public class Postgresql implements DatabaseConnector {
 								qr.newRecord();
 								Object values[] = new Object[columns.getColumnCount()];
 								for (int i = 1; i <= columns.getColumnCount(); i++) {
-									values[i - 1] = res.getObject(i);
+									values[i - 1] = res.getString(i);
 								}
 								qr.addRecord(values);
 							}

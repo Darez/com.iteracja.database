@@ -109,11 +109,11 @@ public class QueryResult {
 	 * @author Michał Tomczak
 	 * @return
 	 */
-	public HashMap<String, Object> toHashMap() {
-		HashMap<String, Object> result=new HashMap<String, Object>();
+	public HashMap<String, String> toHashMap() {
+		HashMap<String, String> result=new HashMap<String, String>();
 		Object[] row=records.get(cursor);
 		for(int i=0; i <row.length; i++){
-			result.put(columns[i], row[i]);
+			result.put(columns[i], (String)row[i]);
 		}
 		return result;
 	}
