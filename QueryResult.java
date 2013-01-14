@@ -15,13 +15,11 @@ public class QueryResult {
 	private ResultSet result;
 	private int cursor=-1;
 	private Statement statement;
+	private int errorCode;
+	private SQLException exception;
 
 	public boolean isSuccess() {
 		return success;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
 	}
 	
 	/**
@@ -33,11 +31,6 @@ public class QueryResult {
 	}
 
 	
-	public void setErrorMessage(String message) {
-		this.errorMessage=message;
-		success=false;
-	}
-
 	public ResultSet getResult() {
 		return result;
 	}
@@ -86,6 +79,15 @@ public class QueryResult {
 
 	void setStatement(Statement statement) {
 		this.statement=statement;
+	}
+
+	public void setException(SQLException e) {
+		this.exception=e;		
+		this.success=false;
+	}
+
+	public SQLException getException() {
+		return exception;
 	}
 
 

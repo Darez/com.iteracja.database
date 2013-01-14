@@ -152,7 +152,7 @@ public class Postgresql implements DatabaseConnector {
 		}
 
 		if (!qr.isSuccess())
-			throw new SQLException(qr.getErrorMessage());
+			throw new SQLException(qr.getException());
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class Postgresql implements DatabaseConnector {
 		}
 
 		if (!qr.isSuccess())
-			throw new SQLException(qr.getErrorMessage());
+			throw new SQLException(qr.getException());
 
 		return qr;
 	}
@@ -336,8 +336,7 @@ public class Postgresql implements DatabaseConnector {
 						}
 						
 					} catch (SQLException e) {
-
-						qr.setErrorMessage(e.getMessage());
+						qr.setException(e);
 						// uruchomienie listenera z błędem sql
 						for (DatabaseListener currentListenerError : listener.toArray(new DatabaseListener[listener.size()])) {
 							try {
@@ -347,8 +346,7 @@ public class Postgresql implements DatabaseConnector {
 						}
 
 						// jeżeli jest to rozlączenie bazy to wygeneruj kolejny wyjątek o rozłączeniu
-						if (e.getMessage().substring(0, 5).equals("FATAL")) {
-
+						if (e.getMessage().substring(0, 5).equals("FATAL") || e.getErrorCode()==0) {
 							for (DatabaseListener currentListenerError : listener.toArray(new DatabaseListener[listener.size()])) {
 								try {
 									currentListenerError.interuptedConnection(Postgresql.this);
