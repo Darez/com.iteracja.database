@@ -346,7 +346,7 @@ public class Postgresql implements DatabaseConnector {
 						}
 
 						// jeżeli jest to rozlączenie bazy to wygeneruj kolejny wyjątek o rozłączeniu
-						if (e.getMessage().substring(0, 5).equals("FATAL") || e.getErrorCode()==0) {
+						if (e.getMessage().substring(0, 5).equals("FATAL") ||  e.getMessage().contains("Wystąpił błąd We/Wy podczas wysyłania do serwera")) {
 							for (DatabaseListener currentListenerError : listener.toArray(new DatabaseListener[listener.size()])) {
 								try {
 									currentListenerError.interuptedConnection(Postgresql.this);
